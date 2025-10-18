@@ -10,6 +10,7 @@
       "request": "launch",
       "module": "homeassistant",
       "justMyCode": false,
+      "python": "${workspaceFolder}/.venv/bin/python",
       "args": [
         "--debug",
         "-c",
@@ -23,6 +24,7 @@
       "request": "launch",
       "module": "homeassistant",
       "justMyCode": false,
+      "python": "${workspaceFolder}/.venv/bin/python",
       "args": [
         "--debug",
         "-c",
