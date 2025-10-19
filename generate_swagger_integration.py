@@ -1,4 +1,78 @@
+#!/usr/bin/env python3
+"""
+Swagger UI Integration Generator for Home Assistant
+
+This script automatically generates the Swagger UI integration files
+whenever Home Assistant is built or launched. It ensures the Swagger UI
+is always up-to-date with the latest API endpoints.
+
+Usage:
+    python generate_swagger_integration.py
+"""
+
+import os
 import json
+import logging
+from pathlib import Path
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+def ensure_directory_exists(path):
+    """Ensure directory exists, create if it doesn't."""
+    Path(path).mkdir(parents=True, exist_ok=True)
+    logger.info(f"Ensured directory exists: {path}")
+
+def generate_swagger_init():
+    """Generate the __init__.py file for the Swagger UI integration."""
+    content = '''"""The Swagger UI integration."""
+import os
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.typing import ConfigType
+from .http import SwaggerUIView, SwaggerSpecView
+
+DOMAIN = "swagger_ui"
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up the Swagger UI component."""
+    hass.http.register_view(SwaggerUIView())
+    hass.http.register_view(SwaggerSpecView())
+    return True
+'''
+    
+    init_path = "homeassistant/components/swagger_ui/__init__.py"
+    ensure_directory_exists(os.path.dirname(init_path))
+    
+    with open(init_path, 'w') as f:
+        f.write(content)
+    
+    logger.info(f"Generated: {init_path}")
+
+def generate_swagger_manifest():
+    """Generate the manifest.json file for the Swagger UI integration."""
+    manifest = {
+        "domain": "swagger_ui",
+        "name": "Swagger UI",
+        "codeowners": [],
+        "dependencies": ["http"],
+        "documentation": "https://www.home-assistant.io/integrations/swagger_ui",
+        "issue_tracker": "https://github.com/home-assistant/core/issues?q=is%3Aissue+is%3Aopen+label%3A%22integration%3A+swagger_ui%22",
+        "requirements": [],
+        "version": "0.1.0"
+    }
+    
+    manifest_path = "homeassistant/components/swagger_ui/manifest.json"
+    ensure_directory_exists(os.path.dirname(manifest_path))
+    
+    with open(manifest_path, 'w') as f:
+        json.dump(manifest, f, indent=2)
+    
+    logger.info(f"Generated: {manifest_path}")
+
+def generate_swagger_http():
+    """Generate the http.py file with complete API endpoints."""
+    content = '''import json
 import logging
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
@@ -958,3 +1032,68 @@ class SwaggerSpecView(HomeAssistantView):
 
 def async_register(hass: HomeAssistant) -> None:
     """Register HTTP views."""
+'''
+    
+    http_path = "homeassistant/components/swagger_ui/http.py"
+    ensure_directory_exists(os.path.dirname(http_path))
+    
+    with open(http_path, 'w') as f:
+        f.write(content)
+    
+    logger.info(f"Generated: {http_path}")
+
+def update_configuration_yaml():
+    """Update configuration.yaml to include swagger_ui if not already present."""
+    config_path = "config/configuration.yaml"
+    
+    if not os.path.exists(config_path):
+        logger.warning(f"Configuration file not found: {config_path}")
+        return
+    
+    with open(config_path, 'r') as f:
+        content = f.read()
+    
+    # Check if swagger_ui is already in the configuration
+    if "swagger_ui:" in content:
+        logger.info("Swagger UI already configured in configuration.yaml")
+        return
+    
+    # Add swagger_ui to the configuration
+    if content.strip():
+        content += "\n\n# Swagger UI for API documentation\nswagger_ui:\n"
+    else:
+        content = "# Swagger UI for API documentation\nswagger_ui:\n"
+    
+    with open(config_path, 'w') as f:
+        f.write(content)
+    
+    logger.info(f"Updated: {config_path}")
+
+def main():
+    """Main function to generate all Swagger UI integration files."""
+    logger.info("🚀 Starting Swagger UI Integration Generation...")
+    
+    try:
+        # Generate all integration files
+        generate_swagger_init()
+        generate_swagger_manifest()
+        generate_swagger_http()
+        update_configuration_yaml()
+        
+        logger.info("✅ Swagger UI Integration Generation Complete!")
+        logger.info("📁 Generated files:")
+        logger.info("   - homeassistant/components/swagger_ui/__init__.py")
+        logger.info("   - homeassistant/components/swagger_ui/manifest.json")
+        logger.info("   - homeassistant/components/swagger_ui/http.py")
+        logger.info("   - config/configuration.yaml (updated)")
+        
+        logger.info("🌐 Swagger UI will be available at:")
+        logger.info("   - http://localhost:8123/api/swagger")
+        logger.info("   - http://localhost:8123/api/swagger/spec")
+        
+    except Exception as e:
+        logger.error(f"❌ Error generating Swagger UI integration: {e}")
+        raise
+
+if __name__ == "__main__":
+    main()

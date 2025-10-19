@@ -1,25 +1,13 @@
-"""Swagger UI integration for Home Assistant API documentation."""
-
-from __future__ import annotations
-
-import logging
-from typing import Any
-
+"""The Swagger UI integration."""
+import os
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
-
-from .http import async_register
-
-_LOGGER = logging.getLogger(__name__)
+from .http import SwaggerUIView, SwaggerSpecView
 
 DOMAIN = "swagger_ui"
 
-
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the Swagger UI integration."""
-    _LOGGER.info("Setting up Swagger UI integration")
-    
-    # Register HTTP views
-    async_register(hass)
-    
+    """Set up the Swagger UI component."""
+    hass.http.register_view(SwaggerUIView())
+    hass.http.register_view(SwaggerSpecView())
     return True

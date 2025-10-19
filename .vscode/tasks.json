@@ -202,6 +202,33 @@
         "reveal": "always",
         "panel": "new"
       }
+    },
+    {
+      "label": "Generate Swagger UI Integration",
+      "detail": "Generate Swagger UI integration files for API documentation.",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python generate_swagger_integration.py",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Home Assistant Core (with Swagger)",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python -m homeassistant -c ./config",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": [],
+      "dependsOn": ["Generate Swagger UI Integration", "Compile English translations"]
     }
   ],
   "inputs": [
