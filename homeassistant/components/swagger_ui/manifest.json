@@ -1,0 +1,9 @@
+{
+  "domain": "swagger_ui",
+  "name": "Swagger UI",
+  "codeowners": ["@home-assistant/core"],
+  "dependencies": ["http"],
+  "documentation": "https://www.home-assistant.io/integrations/swagger_ui",
+  "integration_type": "system",
+  "quality_scale": "internal"
+}
