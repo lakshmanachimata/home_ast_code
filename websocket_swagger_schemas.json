@@ -1,0 +1,458 @@
+{
+  "components": {
+    "schemas": {
+      "WebSocketAuthMessage": {
+        "type": "object",
+        "required": [
+          "type",
+          "access_token"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "auth"
+            ],
+            "example": "auth"
+          },
+          "access_token": {
+            "type": "string",
+            "description": "Long-lived access token"
+          }
+        },
+        "example": {
+          "type": "auth",
+          "access_token": "YOUR_LONG_LIVED_ACCESS_TOKEN"
+        }
+      },
+      "WebSocketGetStates": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "description": "Message ID"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "get_states"
+            ],
+            "example": "get_states"
+          }
+        },
+        "example": {
+          "id": 1,
+          "type": "get_states"
+        }
+      },
+      "WebSocketGetStatesResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "success",
+          "result"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "result"
+            ]
+          },
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/State"
+            }
+          }
+        }
+      },
+      "WebSocketSubscribeEntities": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 2,
+            "description": "Message ID"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "subscribe_entities"
+            ],
+            "example": "subscribe_entities"
+          },
+          "entity_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional: specific entity IDs to subscribe to"
+          },
+          "include": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Include filter"
+          },
+          "exclude": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Exclude filter"
+          }
+        },
+        "example": {
+          "id": 2,
+          "type": "subscribe_entities"
+        }
+      },
+      "WebSocketCallService": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "domain",
+          "service"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "call_service"
+            ],
+            "example": "call_service"
+          },
+          "domain": {
+            "type": "string",
+            "example": "climate"
+          },
+          "service": {
+            "type": "string",
+            "example": "set_temperature"
+          },
+          "service_data": {
+            "type": "object",
+            "description": "Service call parameters"
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "type": "string",
+                "example": "climate.yh_thermostat"
+              },
+              "area_id": {
+                "type": "string"
+              },
+              "device_id": {
+                "type": "string"
+              }
+            }
+          },
+          "return_response": {
+            "type": "boolean",
+            "description": "Return service response"
+          }
+        },
+        "example": {
+          "id": 3,
+          "type": "call_service",
+          "domain": "climate",
+          "service": "set_temperature",
+          "service_data": {
+            "temperature": 25
+          }
+        }
+      },
+      "WebSocketEntityRegistryList": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 4
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "config/entity_registry/list"
+            ],
+            "example": "config/entity_registry/list"
+          }
+        },
+        "example": {
+          "id": 4,
+          "type": "config/entity_registry/list"
+        }
+      },
+      "WebSocketDeviceRegistryList": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 5
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "config/device_registry/list"
+            ],
+            "example": "config/device_registry/list"
+          }
+        },
+        "example": {
+          "id": 5,
+          "type": "config/device_registry/list"
+        }
+      },
+      "WebSocketConfigEntriesGet": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 6
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "config_entries/get"
+            ],
+            "example": "config_entries/get"
+          },
+          "type_filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Filter by integration type"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Filter by domain"
+          }
+        },
+        "example": {
+          "id": 6,
+          "type": "config_entries/get"
+        }
+      },
+      "WebSocketSubscribeEvents": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 7
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "subscribe_events"
+            ],
+            "example": "subscribe_events"
+          },
+          "event_type": {
+            "type": "string",
+            "description": "Optional: specific event type",
+            "example": "state_changed"
+          }
+        },
+        "example": {
+          "id": 7,
+          "type": "subscribe_events"
+        }
+      },
+      "WebSocketGetConfig": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 8
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "get_config"
+            ],
+            "example": "get_config"
+          }
+        },
+        "example": {
+          "id": 8,
+          "type": "get_config"
+        }
+      },
+      "WebSocketGetServices": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 9
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "get_services"
+            ],
+            "example": "get_services"
+          }
+        },
+        "example": {
+          "id": 9,
+          "type": "get_services"
+        }
+      },
+      "WebSocketIntegrationDescriptions": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 10
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "integration/descriptions"
+            ],
+            "example": "integration/descriptions"
+          }
+        },
+        "example": {
+          "id": 10,
+          "type": "integration/descriptions"
+        }
+      },
+      "WebSocketError": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "success"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "result"
+            ],
+            "example": "result"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "invalid_format"
+              },
+              "message": {
+                "type": "string",
+                "example": "Message incorrectly formatted"
+              },
+              "translation_key": {
+                "type": "string"
+              },
+              "translation_domain": {
+                "type": "string"
+              },
+              "translation_placeholders": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "example": {
+          "id": 1,
+          "type": "result",
+          "success": false,
+          "error": {
+            "code": "invalid_format",
+            "message": "Message incorrectly formatted"
+          }
+        }
+      },
+      "WebSocketResult": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "success"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "result"
+            ]
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "result": {
+            "type": "object",
+            "description": "Command-specific result data"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,444 @@
+{
+  "title": "Home Assistant WebSocket API Documentation",
+  "description": "Complete documentation for WebSocket API commands with request/response payloads",
+  "version": "1.0.0",
+  "commands": [
+    {
+      "command": "auth",
+      "description": "Authenticate with the WebSocket API",
+      "required": true,
+      "request": {
+        "id": 0,
+        "type": "auth",
+        "access_token": "YOUR_LONG_LIVED_ACCESS_TOKEN"
+      },
+      "response_success": {
+        "type": "auth_ok",
+        "ha_version": "2024.10.0"
+      },
+      "response_error": {
+        "type": "auth_invalid",
+        "message": "Invalid access token"
+      }
+    },
+    {
+      "command": "get_states",
+      "description": "Get current state of all entities",
+      "required": true,
+      "request": {
+        "id": 1,
+        "type": "get_states"
+      },
+      "response": {
+        "id": 1,
+        "type": "result",
+        "success": true,
+        "result": [
+          {
+            "entity_id": "climate.yh_thermostat",
+            "state": "idle",
+            "attributes": {
+              "current_temperature": 28,
+              "temperature": 23,
+              "hvac_modes": ["heat", "cool", "off"],
+              "friendly_name": "YH Thermostat"
+            },
+            "last_changed": "2024-01-01T12:00:00.000Z",
+            "last_updated": "2024-01-01T12:00:00.000Z",
+            "context": {
+              "id": "context123",
+              "user_id": "user123"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "command": "subscribe_entities",
+      "description": "Subscribe to entity state changes (gets initial states + real-time updates)",
+      "required": true,
+      "request": {
+        "id": 2,
+        "type": "subscribe_entities"
+      },
+      "optional_params": [
+        {
+          "name": "entity_ids",
+          "type": "array",
+          "example": ["climate.yh_thermostat", "switch.mock_switch"],
+          "description": "Subscribe to specific entities only"
+        },
+        {
+          "name": "include",
+          "type": "array",
+          "example": ["climate.*"],
+          "description": "Include filter pattern"
+        },
+        {
+          "name": "exclude",
+          "type": "array",
+          "example": ["sensor.*"],
+          "description": "Exclude filter pattern"
+        }
+      ],
+      "response": {
+        "id": 2,
+        "type": "result",
+        "success": true,
+        "result": null
+      }
+    },
+    {
+      "command": "call_service",
+      "description": "Call a Home Assistant service (control devices)",
+      "required": true,
+      "request": {
+        "id": 3,
+        "type": "call_service",
+        "domain": "climate",
+        "service": "set_temperature",
+        "service_data": {
+          "temperature": 25
+        },
+        "target": {
+          "entity_id": "climate.yh_thermostat"
+        }
+      },
+      "response": {
+        "id": 3,
+        "type": "result",
+        "success": true,
+        "result": {
+          "context": {
+            "id": "context456",
+            "user_id": "user123"
+          }
+        }
+      }
+    },
+    {
+      "command": "config/entity_registry/list",
+      "description": "Get all entities from entity registry",
+      "required": false,
+      "request": {
+        "id": 4,
+        "type": "config/entity_registry/list"
+      },
+      "response": {
+        "id": 4,
+        "type": "result",
+        "success": true,
+        "result": [
+          {
+            "area_id": null,
+            "categories": {},
+            "config_entry_id": null,
+            "created_at": 1761362386.634373,
+            "device_id": null,
+            "disabled_by": null,
+            "entity_category": null,
+            "entity_id": "input_boolean.mock_switch",
+            "has_entity_name": false,
+            "hidden_by": null,
+            "icon": null,
+            "id": "87ff81237f9c8eba9068aa5dc8943070",
+            "labels": [],
+            "modified_at": 1761362387.24883,
+            "name": null,
+            "options": {
+              "conversation": {
+                "should_expose": false
+              }
+            },
+            "original_name": "YH Smart Switch",
+            "platform": "input_boolean",
+            "translation_key": null,
+            "unique_id": "mock_switch"
+          }
+        ]
+      }
+    },
+    {
+      "command": "config/device_registry/list",
+      "description": "Get all devices from device registry",
+      "required": false,
+      "request": {
+        "id": 5,
+        "type": "config/device_registry/list"
+      },
+      "response": {
+        "id": 5,
+        "type": "result",
+        "success": true,
+        "result": [
+          {
+            "id": "device123",
+            "identifiers": [["upnp", "uuid:..."]],
+            "manufacturer": "Router Inc",
+            "model": "Wireless Router",
+            "name": "UPNP IGD Device",
+            "connections": [],
+            "config_entries": ["01K8CP..."]
+          }
+        ]
+      }
+    },
+    {
+      "command": "config_entries/get",
+      "description": "Get all configuration entries (installed integrations)",
+      "required": false,
+      "request": {
+        "id": 6,
+        "type": "config_entries/get"
+      },
+      "optional_params": [
+        {
+          "name": "type_filter",
+          "type": "array",
+          "example": ["device", "hub", "service"],
+          "description": "Filter by integration type"
+        },
+        {
+          "name": "domain",
+          "type": "string",
+          "example": "upnp",
+          "description": "Filter by domain"
+        }
+      ],
+      "response": {
+        "id": 6,
+        "type": "result",
+        "success": true,
+        "result": [
+          {
+            "entry_id": "01K8CP...",
+            "domain": "upnp",
+            "title": "UPNP IGD",
+            "source": "user",
+            "state": "loaded",
+            "supports_options": true,
+            "supports_remove_device": false
+          }
+        ]
+      }
+    },
+    {
+      "command": "subscribe_events",
+      "description": "Subscribe to all or specific event types",
+      "required": false,
+      "request": {
+        "id": 7,
+        "type": "subscribe_events",
+        "event_type": "state_changed"
+      },
+      "optional_params": [
+        {
+          "name": "event_type",
+          "type": "string",
+          "example": "state_changed",
+          "description": "Specific event type to subscribe to (omit for all events)"
+        }
+      ],
+      "response": {
+        "id": 7,
+        "type": "result",
+        "success": true,
+        "result": null
+      },
+      "event_message": {
+        "id": 7,
+        "type": "event",
+        "event": {
+          "data": {
+            "entity_id": "climate.yh_thermostat",
+            "old_state": {
+              "state": "idle",
+              "attributes": {"temperature": 23}
+            },
+            "new_state": {
+              "state": "heating",
+              "attributes": {"temperature": 25}
+            }
+          },
+          "event_type": "state_changed",
+          "time_fired": "2024-01-01T12:00:00.000Z",
+          "origin": "LOCAL",
+          "context": {"id": "context789"}
+        }
+      }
+    },
+    {
+      "command": "get_config",
+      "description": "Get Home Assistant configuration",
+      "required": false,
+      "request": {
+        "id": 8,
+        "type": "get_config"
+      },
+      "response": {
+        "id": 8,
+        "type": "result",
+        "success": true,
+        "result": {
+          "latitude": 37.7749,
+          "longitude": -122.4194,
+          "elevation": 10,
+          "location_name": "Home",
+          "time_zone": "America/Los_Angeles",
+          "unit_system": {
+            "length": "mi",
+            "mass": "lb",
+            "temperature": "°F",
+            "volume": "gal"
+          },
+          "components": ["frontend", "history", "recorder"],
+          "config_dir": "/config",
+          "version": "2024.10.0"
+        }
+      }
+    },
+    {
+      "command": "get_services",
+      "description": "Get all available services",
+      "required": false,
+      "request": {
+        "id": 9,
+        "type": "get_services"
+      },
+      "response": {
+        "id": 9,
+        "type": "result",
+        "success": true,
+        "result": {
+          "climate": {
+            "set_temperature": {
+              "name": "Set Temperature",
+              "description": "Set temperature for climate device",
+              "fields": {
+                "temperature": {
+                  "required": true,
+                  "example": 25,
+                  "selector": {
+                    "number": {
+                      "min": 0,
+                      "max": 50,
+                      "step": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "command": "integration/descriptions",
+      "description": "Get metadata for all brands and integrations (admin only)",
+      "required": false,
+      "admin_required": true,
+      "request": {
+        "id": 10,
+        "type": "integration/descriptions"
+      },
+      "response": {
+        "id": 10,
+        "type": "result",
+        "success": true,
+        "result": {
+          "climate": {
+            "name": "Climate",
+            "description": "Control HVAC systems",
+            "integrations": [
+              {
+                "domain": "generic_thermostat",
+                "name": "Generic Thermostat",
+                "config_flow": true,
+                "dependencies": [],
+                "requirements": []
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "usage_examples": {
+    "complete_session": {
+      "description": "Complete WebSocket session to get all entities and control thermostat",
+      "steps": [
+        {
+          "step": 1,
+          "action": "Connect to WebSocket",
+          "code": "const ws = new WebSocket('ws://localhost:8123/api/websocket');"
+        },
+        {
+          "step": 2,
+          "action": "Authenticate",
+          "request": {
+            "type": "auth",
+            "access_token": "YOUR_LONG_LIVED_ACCESS_TOKEN"
+          },
+          "response": {
+            "type": "auth_ok"
+          }
+        },
+        {
+          "step": 3,
+          "action": "Get all entity states",
+          "request": {
+            "id": 1,
+            "type": "get_states"
+          }
+        },
+        {
+          "step": 4,
+          "action": "Control thermostat",
+          "request": {
+            "id": 2,
+            "type": "call_service",
+            "domain": "climate",
+            "service": "set_temperature",
+            "service_data": {
+              "temperature": 25
+            },
+            "target": {
+              "entity_id": "climate.yh_thermostat"
+            }
+          }
+        },
+        {
+          "step": 5,
+          "action": "Subscribe to real-time updates",
+          "request": {
+            "id": 3,
+            "type": "subscribe_entities"
+          }
+        }
+      ]
+    }
+  },
+  "error_handling": {
+    "invalid_format": {
+      "code": "invalid_format",
+      "message": "Message incorrectly formatted.",
+      "description": "Request payload doesn't match expected schema"
+    },
+    "unknown_command": {
+      "code": "unknown_command",
+      "message": "Unknown command.",
+      "description": "Command type doesn't exist"
+    },
+    "not_found": {
+      "code": "not_found",
+      "message": "Entity not found",
+      "description": "Requested entity or resource doesn't exist"
+    },
+    "unauthorized": {
+      "code": "unauthorized",
+      "message": "Unauthorized",
+      "description": "Authentication required or insufficient permissions"
+    }
+  }
+}
+
